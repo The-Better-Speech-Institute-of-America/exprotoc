@@ -1,0 +1,339 @@
+# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+name: Deploy Jekyll with GitHub Pages dependencies preinstalled
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["master"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+            - name: Teamwork GitHub Sync
+  # You may pin to the exact commit or the version.
+  # uses: Teamwork/github-sync@42dcac69eb5a41fad0d518efeb6aecf1e45f8d01
+  uses: Teamwork/github-sync@v1.3.3
+  with:
+    # GitHub token
+    GITHUB_TOKEN: 
+    # Teamwork URI
+    TEAMWORK_URI: 
+    # Teamwork API token
+    TEAMWORK_API_TOKEN: 
+    # Do you want to enable automatic tagging: true/false
+    AUTOMATIC_TAGGING: # optional
+    # The case-sensitive column name of the column you would like the task to be moved to once the PR has been opened
+    BOARD_COLUMN_OPENED: # optional, default is 
+    # The case-sensitive column name of the column you would like the task to be moved to once the PR has been merged
+    BOARD_COLUMN_MERGED: # optional, default is 
+    # The case-sensitive column name of the column you would like the task to be moved to if the PR was closed without being merged
+    BOARD_COLUMN_CLOSED: # optional, default is 
+
+                      - name: P-SFTP
+  # You may pin to the exact commit or the version.
+  # uses: Luis97lol/PSFTP@aafeb8d65142f6368a8c26eba46fd8cb83b2c607
+  uses: Luis97lol/PSFTP@v1.4
+  with:
+    # Remote SFTP Host
+    host: 
+    # Session Username
+    user: 
+    # Session Password
+    pass: 
+    # Optional hostkey if not cached
+    hostkey: # optional
+    # Path to the file that contains the psftp commands to be executed
+    scriptPath: 
+            - name: ssh deploy to server
+  # You may pin to the exact commit or the version.
+  # uses: Gabo-p/ssh-deploy-to-server@4f329c1c81a0091a0d6a05a319ac9275e32e4ac8
+  uses: Gabo-p/ssh-deploy-to-server@v1.0.7
+  with:
+    # Private key part of an SSH key pair
+    SSH_PRIVATE_KEY: 
+    # Remote host
+    REMOTE_HOST: 
+    # Remote user
+    REMOTE_USER: 
+    # Remote port
+    REMOTE_PORT: # optional, default is 22
+    # Source directory, path relative to `$GITHUB_WORKSPACE` root, eg: `dist/`
+    SOURCE: # optional, default is 
+    # Target directory
+    TARGET: # optional, default is 
+    # Arguments to pass to rsync
+    ARGS: # optional, default is -rlgoDzvc -i
+    # An array of ssh arguments, they must be prefixed with -o and separated by a comma, for example: -o SomeArgument=no, -o SomeOtherArgument=5 
+    SSH_CMD_ARGS: # optional, default is -o StrictHostKeyChecking=no
+    # paths to exclude separated by `,`, ie: `/dist/, /node_modules/`
+    EXCLUDE: # optional, default is 
+    # Script to run on host machine before rsync
+    SCRIPT_BEFORE: # optional, default is 
+    # Script to run on host machine after rsync
+    SCRIPT_AFTER: # optional, default is 
+          
+                      - name: Publish Symbols
+  uses: microsoft/action-publish-symbols@v2.1.6
+  with:
+    # The Azure DevOps account name to publish the symbols to
+    accountName: 
+    # The Azure DevOps Personal Access Token (PAT) that has permission to publish symbols
+    personalAccessToken: 
+    # The base directory where the source code exists (defaults to GITHUB_WORKSPACE)
+    symbolsFolder: # optional
+    # The search pattern used to search for symbols
+    searchPattern: # optional, default is **/bin/**/*.pdb
+    # The Url of your symbol server (defaults to https://artifacts.dev.azure.com)
+    symbolServiceUrl: # optional, default is https://artifacts.dev.azure.com
+                      - name: Upload GitHub Action workflows logs to opensearch
+  # You may pin to the exact commit or the version.
+  # uses: sathishkumar-p/upload-github-workflow-logs-to-opensearch@490363d6c6a783c5491c76422ce99c61ebe47f55
+  uses: sathishkumar-p/upload-github-workflow-logs-to-opensearch@v5
+  with:
+    # GitHub PAT
+    github_token: # optional
+    # The github organization to read the workflows logs from
+    github_org: # optional
+    # The github repository to read the workflows logs from
+    github_repository: # optional
+    # Github HOST API url, For enterprise will be different
+    github_host_api: # optional
+    # The workflow specific run id to read the logs from
+    github_run_id: # optional
+    # opensearch api key id
+    opensearch_username: # optional
+    # opensearch api key
+    opensearch_password: # optional
+    # The opensearch host
+    opensearch_host: # optional
+    # The opensearch index
+    opensearch_index: # optional
+
+                      - name: Push Package to Octopus Deploy
+  # You may pin to the exact commit or the version.
+  # uses: OctopusDeploy/push-package-action@035fb4fdbe77401574ec62275f9a531c570bd420
+  uses: OctopusDeploy/push-package-action@v3.0.4
+  with:
+    # A multi-line list of packages to push to Octopus Deploy.
+    packages: 
+    # Determines the action to perform with package if it already exists in the repository. Valid values are "FailIfExists", "OverwriteExisting", and "IgnoreIfExists".
+    overwrite_mode: # optional, default is FailIfExists
+    # The API key used to access Octopus Deploy. You must provide an API key or username and password. If the guest account is enabled, a key of API-GUEST may be used. It is strongly recommended that this value retrieved from a GitHub secret.
+    api_key: # optional
+    # The base URL hosting Octopus Deploy (i.e. "https://octopus.example.com/"). It is recommended to retrieve this value from an environment variable.
+    server: # optional
+    # The name or ID of a space within which this command will be executed. If omitted, the default space will be used.
+    space: # optional
+
+                      - name: Ngrok TCP Tunelling with different Operating sytems
+  # You may pin to the exact commit or the version.
+  # uses: danvixent/ngrok-tunneling-action@7adfbe467641e63e6cb65c41e97e9d84c580b826
+  uses: danvixent/ngrok-tunneling-action@v0.1.16
+  with:
+    # Challenge deployment timeout
+    timeout: # default is 1h
+    # The port to forward traffic to
+    port: 
+    # Ngrok authorization token
+    ngrok_authtoken: 
+    # Operating system
+    os: 
+
+                      - name: SFTP Transfer
+  # You may pin to the exact commit or the version.
+  # uses: danhendrickson/sftp-transfer-action@531b97c11ad67e7e242e2cf98cb16c3849544f58
+  uses: danhendrickson/sftp-transfer-action@v2023.51.2
+  with:
+    # Server name secret
+    server: # default is 
+    # Username secret
+    user: # default is 
+    # Password secret
+    pass: # default is 
+    # Port
+    port: # default is 22
+    # Local Path
+    local-path: # default is /
+    # Remote Path
+    remote-path: # default is /
+
+                      - name: SFTP Sync
+  # You may pin to the exact commit or the version.
+  # uses: swillner/sftp-sync-action@629e1fe7a2db87d0f1da0e15a970b514fe398c09
+  uses: swillner/sftp-sync-action@v1.0
+  with:
+    # server
+    server: 
+    # server port (default: 22)
+    port: # default is 22
+    # user
+    user: 
+    # Private SSH key for user (include via secrets if possible)
+    user_private_key: 
+    # Public SSH key of host
+    host_public_key: # default is 
+    # Local path to sync (default: .)
+    local: # default is .
+    # Path on server (default: .)
+    remote: # default is .
+    # Additional options for SSH
+    ssh_options: # optional
+    # Additional options for lftp mirror command (e.g. '--exclude-glob=.git*/ --verbose' is useful)
+    mirror_options: # optional
+                      - name: SFTP Push
+  # You may pin to the exact commit or the version.
+  # uses: datanomi/SFTP-Push@856acb306cfa4d21ef922e5d5d1ffd03f401e92a
+  uses: datanomi/SFTP-Push@v.1.2.2.1h
+  with:
+    # username
+    username: 
+    # your sftp server
+    server: 
+    # your sftp server port, default to 22
+    port: # default is 22
+    # you can copy private_key from your *.pem file, keep format
+    ssh_private_key: 
+    # will put all file under this path
+    local_path: # default is ./*
+    # files will copy to under remote_path
+    remote_path: # default is /
+    # sftp args
+    args: # optional
+
+            - name: WordPress-Site-Deploy
+  # You may pin to the exact commit or the version.
+  # uses: lattepress/WordPress-Site-Deploy@e50316045d47b6453d8a2a66914685e8a445bba9
+  uses: lattepress/WordPress-Site-Deploy@1.0.0
+  with:
+    # Host url i.e. protocol://host.domain.tld:port/path
+    url: 
+    # SFTP username
+    username: 
+    # SFTP password
+    password: # optional
+    # Specifies the remote root directory to deploy to. The remote path in the URL is ignored.
+    remote_root: # optional
+    # Local directory from where to upload.
+    syncroot: # optional, default is .
+    # Additional options
+    options: # optional, default is --auto-init --insecure -vv
+          
+                      - name: Deploy SSL certificate to UCloud CDN
+  # You may pin to the exact commit or the version.
+  # uses: tls-deploy-actions/ucloud-cdn@37cbaf7923b1005102a1675190aef9c5fe27fa2f
+  uses: tls-deploy-actions/ucloud-cdn@v1.01
+  with:
+    # PublicKey provided by ucloud(https://console.ucloud.cn/uaccount/api_manage).
+    public-key: 
+    # Not Cert key! PrivateKey provided by ucloud(https://console.ucloud.cn/uaccount/api_manage).
+    private-key: 
+    # Cert fullchain filepath.
+    fullchain-file: 
+    # Cert key filepath.
+    key-file: 
+    # Domain ID list. not domain list!
+    cdn-domains-id: 
+    # ProjectId
+    project-id: 
+    # Area code, default china('cn')
+    areacode: # optional, default is cn
+                      - name: powerplatform-actions
+  uses: microsoft/powerplatform-actions@v1.4.0
+  with:
+    # URL of Power Platform environment to connect with; e.g. "https://test-env.crm.dynamics.com"
+    environment-url: # optional
+    # Power Platform user name to authenticate with, e.g. myname@my-org.onmicrosoft.com. Setting this input makes user-name and password required; specifying alternate "app-id" credential set of inputs will result in an error.
+    user-name: # optional
+    # Power Platform password, required if authenticating with username. Do NOT checkin password, instead create a secret and reference it here with: see: https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets#using-encrypted-secrets-in-a-workflow
+    password-secret: # optional
+
+                      - name: Podman Login
+  # You may pin to the exact commit or the version.
+  # uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603
+  uses: redhat-actions/podman-login@v1.7
+  with:
+    # Hostname/domain of the container image registry such as quay.io, docker.io
+    registry: 
+    # Username to log in against the container image registry
+    username: 
+    # Password, encrypted password, or access token for username
+    password: 
+    # Path of the authentication file, this will override the default auth file path in podman
+    auth_file_path: # optional
+    # 'By default, the action logs out of the container image registry at the end
+of the job (for self-hosted runners). Set this to false to disable this behaviour'
+
+    logout: # optional, default is true
+
+            - name: Azure PowerShell Action
+  uses: Azure/powershell@v2
+  with:
+    # Specify the Az PowerShell script here.
+    inlineScript: 
+    # Azure PS version to be used to execute the script, example: 1.8.0, 2.8.0, 3.4.0. To use the latest version, specify "latest".
+    azPSVersion: 
+    # Select the value of the ErrorActionPreference variable for executing the script. Options: stop, continue, silentlyContinue. Default is Stop.
+    errorActionPreference: # optional, default is Stop
+    # If this is true, this task will fail if any errors are written to the error pipeline, or if any data is written to the Standard Error stream.
+    failOnStandardError: # optional, default is false
+    # Used to pull Az module from Azure/az-ps-module-versions.  Since there's a default, this is typically not supplied by the user.
+    githubToken: # optional, default is ${{ github.token }}
+
+            - name: Case Police
+  # You may pin to the exact commit or the version.
+  # uses: Namchee/actions-case-police@81e34d0f448fcba6bfdafdb846f08454038fa4e9
+  uses: Namchee/actions-case-police@v1.0.2
+  with:
+    # GitHub account access token
+    access_token: 
+    # Determines if possible case fixes should be applied automatically
+    fix: # optional, default is true
+    # Dictionary names to be used when validating word cases
+    preset: # optional, default is 
+    # Words to be whitelisted on case police
+    exclude: # optional, default is 
+    # Stringified JSON map that represents custom entiries for dictionary that will be used on case police
+    dictionary: # optional, default is 
+          
+          
+          
