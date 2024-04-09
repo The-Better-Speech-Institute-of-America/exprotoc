@@ -1,0 +1,15 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "features": {
+  }
+}
+"ghcr.io/devcontainers/features/anaconda:1": {}
+
+"ghcr.io/nordcominc/devcontainer-features/android-sdk:1": {}
+"ghcr.io/jlaundry/devcontainer-features/azure-functions-core-tools:1": {}
+
+"ghcr.io/natescherer/devcontainers-custom-features/powershell-resources:1": {}
+"ghcr.io/devcontainers-contrib/features/asciidoctorj-sdkman:2": {}
+
+
+"ghcr.io/devcontainers-contrib/features/powershell:1": {}
